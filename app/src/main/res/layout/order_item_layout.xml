@@ -1,0 +1,272 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="16dp"
+    android:background="#ffffff"
+    android:paddingBottom="16dp">
+
+    <TextView
+        android:id="@+id/orderItem_date"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="16dp"
+        android:text="Ordered on : 15-3-2021"
+
+        android:textSize="16sp"
+        app:layout_constraintEnd_toStartOf="@+id/orderItem_status"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/textView68"
+        android:layout_width="0dp"
+        android:layout_height="1dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="2dp"
+        android:layout_marginEnd="16dp"
+        android:alpha="0.1"
+
+        android:background="#000000"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/orderItem_date" />
+
+    <TextView
+        android:id="@+id/orderItem_status"
+        android:layout_width="wrap_content"
+        android:layout_height="21dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="16dp"
+        android:fontFamily="sans-serif-condensed"
+        android:text="Pending Approval"
+        android:textColor="@color/colorPrimary"
+        android:textSize="16sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/orderItem_productName"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="8dp"
+        android:text="Dosa"
+        android:textColor="#000000"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView68" />
+
+    <TextView
+        android:id="@+id/order_item_inTransit"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="16dp"
+        android:text="In transit"
+        android:textAlignment="center"
+        android:textSize="14sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/order_item_preparation" />
+
+    <TextView
+        android:id="@+id/order_item_preparation"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="32dp"
+        android:gravity="center"
+        android:text="Preparation\nPacking"
+        android:textSize="14sp"
+        app:layout_constraintEnd_toStartOf="@+id/order_item_inTransit"
+        app:layout_constraintTop_toBottomOf="@+id/order_item_approval_dot" />
+
+    <TextView
+        android:id="@+id/textView69"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:text="Order\nplaced"
+        android:textAlignment="center"
+        android:textColor="#329213"
+        android:textSize="14sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/imageView9" />
+
+    <TextView
+        android:id="@+id/orderItem_qty_delv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="16dp"
+        android:fontFamily="sans-serif"
+        android:text="Qty : 2 plates"
+        android:textColor="#000000"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView68" />
+
+    <TextView
+        android:id="@+id/order_item_approval"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:drawableBottom="@drawable/ic_baseline_keyboard_arrow_down_24"
+        android:gravity="center"
+        android:text="Approval\nin process.."
+        android:textColor="@color/blue1"
+        android:textSize="14sp"
+        app:layout_constraintEnd_toStartOf="@+id/order_item_preparation"
+        app:layout_constraintStart_toEndOf="@+id/textView69"
+        app:layout_constraintTop_toBottomOf="@+id/imageView9" />
+
+    <TextView
+        android:id="@+id/border"
+        android:layout_width="0dp"
+        android:layout_height="1dp"
+
+        android:layout_marginTop="16dp"
+        android:alpha="0.3"
+        android:visibility="visible"
+        app:layout_constraintEnd_toEndOf="@+id/order_item_inTransitDot"
+        app:layout_constraintStart_toStartOf="@+id/imageView9"
+        app:layout_constraintTop_toBottomOf="@+id/orderItem_customerName" />
+
+    <ImageView
+        android:id="@+id/order_item_inTransitDot"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toTopOf="@+id/order_item_preparation"
+        app:layout_constraintEnd_toEndOf="@+id/order_item_inTransit"
+        app:layout_constraintStart_toStartOf="@+id/order_item_inTransit"
+        app:layout_constraintTop_toTopOf="@+id/order_item_preparation_dot"
+        app:srcCompat="@drawable/ic_baseline_brightness_1_24" />
+
+    <ImageView
+        android:id="@+id/order_item_preparation_dot"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toTopOf="@+id/order_item_approval"
+        app:layout_constraintEnd_toEndOf="@+id/order_item_preparation"
+        app:layout_constraintStart_toStartOf="@+id/order_item_preparation"
+        app:layout_constraintTop_toTopOf="@+id/order_item_approval_dot"
+        app:srcCompat="@drawable/ic_baseline_brightness_1_24" />
+
+    <ImageView
+        android:id="@+id/order_item_approval_dot"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toTopOf="@+id/textView69"
+        app:layout_constraintEnd_toEndOf="@+id/order_item_approval"
+        app:layout_constraintStart_toStartOf="@+id/order_item_approval"
+        app:layout_constraintTop_toTopOf="@+id/imageView9"
+        app:srcCompat="@drawable/ic_baseline_lens_24" />
+
+    <ImageView
+        android:id="@+id/imageView9"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:adjustViewBounds="true"
+        android:cropToPadding="true"
+        android:scaleType="matrix"
+        app:layout_constraintBottom_toBottomOf="@+id/border"
+        app:layout_constraintEnd_toEndOf="@+id/textView69"
+        app:layout_constraintStart_toStartOf="@+id/textView69"
+        app:layout_constraintTop_toTopOf="@+id/border"
+        app:srcCompat="@drawable/ic_baseline_check_circle_24" />
+
+    <TextView
+        android:id="@+id/orderItem_amt"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="16dp"
+        android:fontFamily="sans-serif"
+        android:text="Amt. Rs. 200"
+        android:textColor="#000000"
+        android:textSize="16sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/orderItem_qty_delv" />
+
+    <TextView
+        android:id="@+id/orderItem_delivery_est"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="8dp"
+
+        android:layout_marginEnd="16dp"
+        android:fontFamily="sans-serif-medium"
+        android:gravity="end"
+        android:text="Est. Delivery\nup to 4.00 pm"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/orderItem_customerName"
+        app:layout_constraintTop_toBottomOf="@+id/orderItem_amt" />
+
+    <TextView
+        android:id="@+id/orderItem_customerName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="8dp"
+        android:text="Order by : Gajanan Mahalley"
+        android:textColor="@color/colorPrimaryDark"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/orderItem_productName" />
+
+    <TextView
+        android:id="@+id/order_item_accept"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/button"
+        android:drawableStart="@drawable/ic_baseline_check_24"
+        android:drawablePadding="12dp"
+        android:paddingStart="12dp"
+        android:paddingTop="8dp"
+        android:paddingEnd="12dp"
+        android:paddingBottom="8dp"
+        android:text="Accept"
+        android:textColor="@android:color/white"
+        android:visibility="visible"
+        app:layout_constraintStart_toStartOf="@+id/order_item_approval"
+        app:layout_constraintTop_toBottomOf="@+id/order_item_approval" />
+
+    <TextView
+        android:id="@+id/order_item_reject"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:background="@drawable/button_outline_rect"
+        android:drawableStart="@drawable/ic_clear_black_24dp"
+        android:drawablePadding="12dp"
+        android:paddingStart="12dp"
+        android:paddingTop="8dp"
+        android:paddingEnd="12dp"
+        android:paddingBottom="8dp"
+        android:text="Reject"
+        android:textColor="@color/colorPrimary"
+        android:visibility="visible"
+        app:layout_constraintBottom_toBottomOf="@+id/order_item_accept"
+        app:layout_constraintStart_toEndOf="@+id/order_item_accept"
+        app:layout_constraintTop_toTopOf="@+id/order_item_accept" />
+
+    <TextView
+        android:id="@+id/order_item_ready"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:background="@drawable/button"
+        android:drawableStart="@drawable/ic_baseline_check_24"
+        android:drawablePadding="12dp"
+        android:paddingStart="12dp"
+        android:paddingTop="8dp"
+        android:paddingEnd="12dp"
+        android:paddingBottom="8dp"
+        android:text="Ready"
+        android:textColor="@android:color/white"
+        android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="@+id/order_item_preparation"
+        app:layout_constraintStart_toStartOf="@+id/order_item_preparation"
+        app:layout_constraintTop_toBottomOf="@+id/order_item_preparation" />
+</androidx.constraintlayout.widget.ConstraintLayout>

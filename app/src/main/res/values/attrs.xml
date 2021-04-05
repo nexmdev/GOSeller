@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    ...
+    <declare-styleable name="OTPView">
+        <!-- Defines the next view to give focus to when the text is filled.-->
+        <attr name="nextView" format="reference"/>
+        <!-- Defines the previous view to give focus to when backButton is pressed.-->
+        <attr name="prevView" format="reference"/>
+    </declare-styleable>
+    ...
+</resources>

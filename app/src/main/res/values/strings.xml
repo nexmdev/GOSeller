@@ -1,0 +1,11 @@
+<resources>
+    <string name="app_name">GO Seller</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="title_activity_bottom">BottomActivity</string>
+    <string name="title_home">My Orders</string>
+    <string name="title_notifications">Notifications</string>
+    <string name="products">Products</string>
+    <string name="title_dashboard">Products</string>
+</resources>
