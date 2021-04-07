@@ -24,6 +24,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
+import com.firebase.ui.database.FirebaseRecyclerOptions;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -32,10 +33,12 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
+import com.nexm.goseller.Adapters.OrderHolder;
 import com.nexm.goseller.Adapters.ProductsViewHolder;
 import com.nexm.goseller.DetailsActivity;
 import com.nexm.goseller.GO_SELLER_APPLICATION;
 import com.nexm.goseller.R;
+import com.nexm.goseller.models.Order;
 import com.nexm.goseller.models.ProductListing;
 
 import java.util.HashMap;
@@ -74,7 +77,7 @@ public class ProductsFragment extends Fragment {
     @Override
     public void onDetach() {
         super.onDetach();
-        mFirebaseAdapter.cleanup();
+
     }
 
     @Override
@@ -84,13 +87,23 @@ public class ProductsFragment extends Fragment {
                 .child("ProductListings")
                 .orderByChild("sellerID")
                 .equalTo(GO_SELLER_APPLICATION.sellerID);
+        FirebaseRecyclerOptions<ProductListing> options = new FirebaseRecyclerOptions.Builder<ProductListing>()
+                .setQuery(query, ProductListing.class)
+                .build();
 
         mFirebaseAdapter = new FirebaseRecyclerAdapter<ProductListing, ProductsViewHolder>(
-                ProductListing.class,R.layout.product_layout,
-                ProductsViewHolder.class,query
+               options
         ) {
+            @NonNull
             @Override
-            protected void populateViewHolder(ProductsViewHolder viewHolder, final ProductListing model, final int position) {
+            public ProductsViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+                View view = LayoutInflater.from(parent.getContext())
+                        .inflate(R.layout.product_layout, parent, false);
+                return new ProductsViewHolder(view);
+            }
+
+            @Override
+            protected void onBindViewHolder(ProductsViewHolder viewHolder, final int position,final ProductListing model) {
 
                 viewHolder.bindData(model,getActivity());
                 viewHolder.setOnItemClickListner(new ProductsViewHolder.OnItemClickListener() {
@@ -197,6 +210,19 @@ public class ProductsFragment extends Fragment {
         dialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
         dialog.getWindow().setLayout(WindowManager.LayoutParams.MATCH_PARENT, WindowManager.LayoutParams.WRAP_CONTENT);
         dialog.show();
+    }
+    @Override
+    public void onStart() {
+        super.onStart();
+        mFirebaseAdapter.startListening();
+
+
+    }
+    @Override
+    public void onStop() {
+        super.onStop();
+        mFirebaseAdapter.stopListening();
+
     }
 
     private void removeProduct(final DatabaseReference productRef, final int position) {

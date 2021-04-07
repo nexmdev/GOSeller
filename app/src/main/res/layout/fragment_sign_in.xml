@@ -93,6 +93,7 @@
         android:text="New User ? Sign Up"
         android:textColor="@color/colorPrimary"
         android:textSize="18sp"
+        android:visibility="gone"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"

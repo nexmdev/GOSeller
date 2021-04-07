@@ -2,12 +2,14 @@ package com.nexm.goseller.Adapters;
 
 import android.content.Context;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.RatingBar;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.nexm.goseller.GO_SELLER_APPLICATION;
 import com.nexm.goseller.R;
 import com.nexm.goseller.models.ProductListing;
@@ -16,6 +18,7 @@ public class ProductsViewHolder extends RecyclerView.ViewHolder {
 
     private static OnItemClickListener listener;
     private final TextView name,price,mrp,rating,dept,edit,remove,update,sold;
+    private final ImageView thumb;
     private final RatingBar ratingBar;
 
 
@@ -37,10 +40,15 @@ public class ProductsViewHolder extends RecyclerView.ViewHolder {
         remove = itemView.findViewById(R.id.products_layout_remove);
         update = itemView.findViewById(R.id.products_layout_update);
         ratingBar = itemView.findViewById(R.id.product_layout_ratingBar);
+        thumb = itemView.findViewById(R.id.product_item_thumbView);
 
     }
     public void bindData(final ProductListing productListing, Context context){
 
+        Glide.with(context)
+                .asBitmap()
+                .load(productListing.getProductThumb())
+                .into(thumb);
         name.setText(productListing.getProductName());
         String[] priceString = productListing.getPrice().split("-");
         mrp.setText("MRP : ₹."+ priceString[2]+" / "+priceString[1]+priceString[0]);

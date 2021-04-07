@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginStart="8dp"
@@ -36,7 +35,7 @@
         android:textSize="18sp"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/imageView6"
+        app:layout_constraintStart_toEndOf="@+id/product_item_thumbView"
         app:layout_constraintTop_toBottomOf="@+id/products_layput_dept" />
 
     <TextView
@@ -48,7 +47,7 @@
         android:text="Offer : Rs.10"
         android:textSize="14sp"
         android:typeface="sans"
-        app:layout_constraintStart_toEndOf="@+id/imageView6"
+        app:layout_constraintStart_toEndOf="@+id/product_item_thumbView"
         app:layout_constraintTop_toBottomOf="@+id/product_layout_name" />
 
     <TextView
@@ -60,7 +59,7 @@
         android:text="MRP : Rs. 12"
         android:textSize="14sp"
         android:typeface="sans"
-        app:layout_constraintStart_toEndOf="@+id/imageView6"
+        app:layout_constraintStart_toEndOf="@+id/product_item_thumbView"
         app:layout_constraintTop_toBottomOf="@+id/product_layout_price" />
 
     <TextView
@@ -70,7 +69,7 @@
         android:layout_marginStart="8dp"
         android:text="Sold : 100"
         android:textSize="14sp"
-        app:layout_constraintStart_toEndOf="@+id/imageView6"
+        app:layout_constraintStart_toEndOf="@+id/product_item_thumbView"
         app:layout_constraintTop_toBottomOf="@+id/product_layout_mrp" />
 
     <LinearLayout
@@ -81,7 +80,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/imageView6">
+        app:layout_constraintTop_toBottomOf="@+id/product_item_thumbView">
 
         <TextView
             android:id="@+id/products_layout_remove"
@@ -156,11 +155,11 @@
         android:layout_marginTop="6dp"
         android:numStars="5"
         android:rating="3"
-        app:layout_constraintStart_toEndOf="@+id/imageView6"
+        app:layout_constraintStart_toEndOf="@+id/product_item_thumbView"
         app:layout_constraintTop_toBottomOf="@+id/product_layout_sold" />
 
     <ImageView
-        android:id="@+id/imageView6"
+        android:id="@+id/product_item_thumbView"
         android:layout_width="150dp"
         android:layout_height="120dp"
         android:scaleType="fitXY"

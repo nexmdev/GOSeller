@@ -3,6 +3,8 @@ package com.nexm.goseller.fragments;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
@@ -13,6 +15,8 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
+import android.os.Environment;
+import android.provider.MediaStore;
 import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -24,14 +28,17 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.CompoundButton;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.ScrollView;
 import android.widget.Spinner;
 import android.widget.Switch;
 import android.widget.TextView;
+import android.widget.Toast;
 import android.widget.ToggleButton;
 
+import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.chip.Chip;
@@ -41,18 +48,32 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
+import com.karumi.dexter.Dexter;
+import com.karumi.dexter.MultiplePermissionsReport;
+import com.karumi.dexter.PermissionToken;
+import com.karumi.dexter.listener.PermissionRequest;
+import com.karumi.dexter.listener.multi.MultiplePermissionsListener;
 import com.nexm.goseller.GO_SELLER_APPLICATION;
 import com.nexm.goseller.R;
 import com.nexm.goseller.models.Delivery;
 import com.nexm.goseller.models.ProductDetails;
 import com.nexm.goseller.models.ProductListing;
+import com.nexm.goseller.util.FileUtil;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
+
+import id.zelory.compressor.Compressor;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -69,7 +90,7 @@ public class AddNewProductFragment extends Fragment {
 
 
     // TODO: Rename and change types of parameters
-    private String productID,unit;
+    private String productID,unit,CALLER;
     private final String[] stepTitles = {"","Department","Photos","Product Info","Delivery info"};
     private ArrayList<String> PRICES ;
     private int counter = 1,progress = 25,FINAL_STEP =4;
@@ -88,8 +109,11 @@ public class AddNewProductFragment extends Fragment {
     private ProductDetails productDetails;
     private Delivery delivery;
     private boolean NEW ;
+    private ImageView thumb,photo1,photo2,photo3;
 
     private OnFragmentInteractionListener mListener;
+    private File actualImage;
+    private File compressedImage;
 
     public AddNewProductFragment() {
         // Required empty public constructor
@@ -163,6 +187,35 @@ public class AddNewProductFragment extends Fragment {
         step4Layout = view.findViewById(R.id.newP_step4Layout);
         previousButton = view.findViewById(R.id.newP_previousButton);
 
+         thumb = view.findViewById(R.id.newProduct_thumb_imageView);
+         photo1 = view.findViewById(R.id.newProduct_imageView1);
+         photo2 = view.findViewById(R.id.newProduct_imageView2);
+         photo3 = view.findViewById(R.id.newProduct_imageView3);
+
+        thumb.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                CALLER = "Thumb";
+                checkPermission("Thumb");
+            }
+        });
+        photo1.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                CALLER = "p1";
+                checkPermission("p1");
+            }
+        });
+        photo2.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                CALLER = "p2";
+                checkPermission("p2");
+            }
+        });
+        photo3.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                CALLER = "p3";
+                checkPermission("p3");
+            }
+        });
         toggleLayouts();
 
         final TextView setPrices = view.findViewById(R.id.newProduct_setpricebutton);
@@ -230,6 +283,122 @@ public class AddNewProductFragment extends Fragment {
         return view;
     }
 
+    private void checkPermission(String thumb) {
+        progressBar.setVisibility(View.VISIBLE);
+        Dexter.withContext(getActivity()).withPermissions(new String[]{"android.permission.CAMERA", "android.permission.WRITE_EXTERNAL_STORAGE"}).withListener(new MultiplePermissionsListener() {
+            public void onPermissionsChecked(MultiplePermissionsReport report) {
+                if (report.areAllPermissionsGranted()) {
+                    AddNewProductFragment.this.startActivityForResult(new Intent("android.intent.action.PICK", MediaStore.Images.Media.EXTERNAL_CONTENT_URI), 0);
+                }
+            }
+
+            public void onPermissionRationaleShouldBeShown(List<PermissionRequest> list, PermissionToken token) {
+                token.continuePermissionRequest();
+            }
+        }).check();
+    }
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        this.progressBar.setVisibility(View.GONE);
+        Bitmap bitmap = null;
+        try {
+            bitmap = MediaStore.Images.Media.getBitmap(getActivity().getContentResolver(), data.getData());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        if (bitmap != null) {
+            try {
+                actualImage = FileUtil.from(getActivity(), Uri.parse(MediaStore.Images.Media.insertImage(getActivity().getContentResolver(), bitmap, "Title", (String) null)));
+            } catch (IOException e2) {
+                e2.printStackTrace();
+            }
+            customCompressImage();
+        }
+    }
+
+    private void customCompressImage() {
+        if (this.actualImage == null) {
+            Toast.makeText(getActivity(), "Please choose an image!", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        try {
+            compressedImage = new Compressor(getActivity()).setMaxWidth(640).setMaxHeight(480).setQuality(75).setCompressFormat(Bitmap.CompressFormat.WEBP).setDestinationDirectoryPath(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).getAbsolutePath()).compressToFile(this.actualImage);
+            uploadPhoto();
+        } catch (IOException e) {
+            e.printStackTrace();
+            Toast.makeText(getActivity(), e.getMessage(), Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private void uploadPhoto() {
+        if ( compressedImage != null) {
+            FirebaseStorage storage = FirebaseStorage.getInstance();
+            Uri file = Uri.fromFile(this.compressedImage);
+            StorageReference storageRef = storage.getReference();
+            storageRef.child("Products/" + selectedDepartment + "/" +  category + "/" + file.getLastPathSegment()).putFile(file).addOnFailureListener(new OnFailureListener() {
+                public void onFailure(Exception exception) {
+                    Toast.makeText(getActivity(), "Photo upload failed !", Toast.LENGTH_SHORT).show();
+                  progressBar.setVisibility(View.GONE);
+                }
+            }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                    taskSnapshot.getMetadata().getReference().getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                        public void onSuccess(Uri uri) {
+                            //setURLs(uri.toString());
+                            progressBar.setVisibility(View.GONE);
+                            setCompressedImage(uri.toString());
+                            Toast.makeText(getActivity(), "Photo upload Successful !", Toast.LENGTH_SHORT).show();
+                        }
+                    }).addOnFailureListener(new OnFailureListener() {
+                        public void onFailure(Exception e) {
+                             progressBar.setVisibility(View.GONE);
+                            Toast.makeText( getActivity(), "Error ! try again",  Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                }
+            });
+            return;
+        }
+        this.progressBar.setVisibility(View.GONE);
+    }
+    private void setCompressedImage(String url){
+        switch(CALLER){
+            case "Thumb":
+                productListing.setProductThumb(url);
+                Glide.with(getActivity())
+                        .asBitmap()
+                        .load(url)
+                        .into(thumb);
+                break;
+            case "p1":
+                productDetails.setUrl1(url);
+                Glide.with(getActivity())
+                        .asBitmap()
+                        .load(url)
+                        .into(photo1);
+                break;
+            case "p2":
+                productDetails.setUrl2(url);
+                Glide.with(getActivity())
+                        .asBitmap()
+                        .load(url)
+                        .into(photo2);
+                break;
+            case "p3":
+                productDetails.setUrl3(url);
+                Glide.with(getActivity())
+                        .asBitmap()
+                        .load(url)
+                        .into(photo3);
+                break;
+
+
+        }
+    }
+
+    private void setURLs(String toString) {
+    }
+
     private void setProductDetails() {
         reference.child("ProductListings").child(productID)
                 .addListenerForSingleValueEvent(new ValueEventListener() {
@@ -242,6 +411,10 @@ public class AddNewProductFragment extends Fragment {
                             category = deptcatsub[1];
                             subCategory = deptcatsub[2];
                             namefield.setText(productListing.getProductName());
+                            Glide.with(getActivity())
+                                    .asBitmap()
+                                    .load(productListing.getProductThumb())
+                                    .into(thumb);
                            // quantityfield.setText(String.valueOf(productListing.getqAvailable()));
                             setUpSpinner1();
                         }
@@ -264,6 +437,18 @@ public class AddNewProductFragment extends Fragment {
                             five.setText(productDetails.getFive());
                             six.setText(productDetails.getSix());
                             descriptionfield.setText(productDetails.getDiscription());
+                            Glide.with(getActivity())
+                                    .asBitmap()
+                                    .load(productDetails.getUrl1())
+                                    .into(photo1);
+                            Glide.with(getActivity())
+                                    .asBitmap()
+                                    .load(productDetails.getUrl2())
+                                    .into(photo2);
+                            Glide.with(getActivity())
+                                    .asBitmap()
+                                    .load(productDetails.getUrl3())
+                                    .into(photo3);
                         }
                     }
                     @Override
@@ -373,7 +558,7 @@ public class AddNewProductFragment extends Fragment {
                 units.clear();
                 units.add("gm");units.add("kg");units.add("ml");units.add("L");units.add("piece");
                 break;
-            case "जेवण-नाश्ता-टिकावू पदा्रथ":
+            case "जेवण-नाश्ता-इत्यादी":
                 units.clear();units.add("plate");units.add("piece");
                 units.add("gm");units.add("kg");units.add("ml");units.add("L");
                 break;
@@ -507,7 +692,7 @@ public class AddNewProductFragment extends Fragment {
         childUpdates.put("/ProductListings/"+productID,productListing);
         childUpdates.put("/ProductDetails/"+productID,productDetails);
         if(selectedDepartment.equals("दूध-भाजीपाला-फळे") || selectedDepartment.equals("किराना") || selectedDepartment.equals("जुना बाजार")
-                || selectedDepartment.equals("जेवण-नाश्ता-टिकावू पदा्रथ")){
+                || selectedDepartment.equals("जेवण-नाश्ता-इत्यादी")){
             childUpdates.put("/Delivery/"+productID,delivery);
         }
         if(NEW){
@@ -553,10 +738,8 @@ public class AddNewProductFragment extends Fragment {
                 break;
             case 2:
                 if(     productListing.getProductThumb().matches("x")||
-                        productDetails.getUrl1().matches("x")||
-                        productDetails.getUrl2().matches("x")||
-                        productDetails.getUrl3().matches("x")){
-                    alert("All Product photos are required !");
+                        productDetails.getUrl1().matches("x")){
+                    alert("Product photos are required !");
                 }else{
                     valid = true;
                 }
@@ -911,7 +1094,7 @@ public class AddNewProductFragment extends Fragment {
     private void showDetails() {
 
         switch(selectedDepartment){
-            case "जेवण-नाश्ता-टिकावू पदा्रथ":
+            case "जेवण-नाश्ता-इत्यादी":
                 FINAL_STEP = 4;
                 stepProgress.setMax(100);
                 attachLabels(
